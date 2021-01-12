@@ -1,15 +1,15 @@
 `include "def.v"
 //`define INTERNAL_BITS 32
 //`define DATA_BITS 32
-module Adder(
-	Data_in1,
-	Data_in2,
-	Result
+//`define RTYPE_SHAMT 10:6
+module Sign_extend(
+	in,
+	out
 );
 
-	input [`INTERNAL_BITS-1:0] Data_in1,Data_in2;
-	output [`INTERNAL_BITS-1:0] Result;
+	input [15:0] in;//輸入[15:0]INTERNAL_BITS
+	output [`INTERNAL_BITS-1:0] out;//輸出shamt並擴充至32bits
 
- assign Result = Data_in1 + Data_in2;
+	assign out = {27'b0,in[`RTYPE_SHAMT]};//補27個零在5 bits的shamt前面
 
 endmodule
