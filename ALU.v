@@ -1,13 +1,13 @@
 `include "def.v"
 //`define DATA_BITS 32
-//`define INTERNAL_BITS 16
+//`define INTERNAL_BITS 32
 //`define ALUCONTROL_BITS 4
 
 module ALU(
 	src1,
 	src2,
 	ALUcontrol,
-	Zero,
+	zero,
 	Result
 );
 	parameter AND = 4'b0000,
@@ -20,8 +20,10 @@ module ALU(
 	
 	input [`INTERNAL_BITS-1:0] src1,src2;
 	input [`ALUCONTROL_BITS-1:0] ALUcontrol;
-	output [`INTERNAL_BITS:0] Result;
-	output Zero, exception;
+	output reg [`INTERNAL_BITS:0] Result;
+	output reg zero;
+	
+	reg [`INTERNAL_BITS-1:0] temp;
 	
 	always@(*) begin
 		Result[`INTERNAL_BITS] = 1'b0;
@@ -37,7 +39,8 @@ module ALU(
 			
 			ADD:begin //CLA?
 					Result[`INTERNAL_BITS-1:0] = src1 + src2;
-					if((src1[`INTERNAL_BITS-1]==1'b0&&src2[`INTERNAL_BITS-1]==1'b0&&Result==1'b1)||(src1[`INTERNAL_BITS-1]==1'b1&&src2[`INTERNAL_BITS-1]==1'b1&&Result==1'b0))
+					if((src1[`INTERNAL_BITS-1]==1'b0&&src2[`INTERNAL_BITS-1]==1'b0&&Result==1'b1)||
+					   (src1[`INTERNAL_BITS-1]==1'b1&&src2[`INTERNAL_BITS-1]==1'b1&&Result==1'b0))
 						Result[`INTERNAL_BITS] = 1'b1;
 					else
 						Result[`INTERNAL_BITS] = 1'b0;
@@ -45,8 +48,8 @@ module ALU(
 			
 			SUB:begin
 					Result[`INTERNAL_BITS-1:0] = src1 - src2;
-
-					if((src1[31]==1'b0 && src2[31]==1'b1 && alu_out[31]==1'b1)||(src1[31]==1'b1 && src2[31]==1'b0 && alu_out[31]==1'b0))
+					if((src1[31]==1'b0 && src2[31]==1'b1 && Result[31]==1'b1)||
+				       (src1[31]==1'b1 && src2[31]==1'b0 && Result[31]==1'b0))
 						Result[`INTERNAL_BITS] = 1'b1;
 					else
 						Result[`INTERNAL_BITS] = 1'b0;
@@ -57,18 +60,15 @@ module ALU(
 						zero = 1'b0;
 				end
 			
-      
 			SLT:begin
-					src1_2 = src1 - src2;
-					Result[`INTERNAL_BITS-1:0] = (src1_2[`INTERNAL_BITS-1]) 1'b1:1'b0;
+					temp = src1 - src2;
+					Result[`INTERNAL_BITS:0] = (temp[`INTERNAL_BITS-1])? 33'd1:33'd0;
 				end
 			
-      
 			MUL:begin
 					Result[`INTERNAL_BITS-1:0] = src1[14:0]*src2[14:0];
 				end
 			
-      
 			NOR:begin
 					temp[`INTERNAL_BITS-1:0] = src1|src2;//bit-wise
 					Result[`INTERNAL_BITS-1:0] = ~temp;
@@ -76,8 +76,8 @@ module ALU(
 				
 			
 			default:begin
-					Result[`INTERNAL_BITS] = 33'b0;
-              end			
+						Result[`INTERNAL_BITS] = 33'b0;
+					end			
 		endcase
 	end
 	
