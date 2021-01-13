@@ -39,6 +39,9 @@ module ALUcontroller(
 						6'd42:ALUcontrol = SLT;
 					endcase
 				end
+			default:begin
+						ALUcontrol = 4'b1111;
+					end
 		endcase
 	end
 endmodule
