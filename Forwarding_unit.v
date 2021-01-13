@@ -1,4 +1,4 @@
-`include "dev.v"
+`include "def.v"
 //`define REGISTER_BITS 5
 
 module Forwarding_unit(ID_EX_RS,
@@ -11,11 +11,11 @@ module Forwarding_unit(ID_EX_RS,
 					   src2_mux
 					   );
 	
-	input EX_MEM_WB, MEM_WB_WB;
-	input [`REDISTER_BITS-1:0] ID_EX_RS, ID_EX_RT, EX_MEM_RD, MEM_WB_RD;
-	output [1:0] src1_mux, src2_mux;
+	input EX_MEM_RegWrite, MEM_WB_RegWrite;
+	input [`REGISTER_BITS-1:0] ID_EX_RS, ID_EX_RT, EX_MEM_RD, MEM_WB_RD;
+	output reg [1:0] src1_mux, src2_mux;
 	
-	always(*)
+	always@(*)
 	begin
 		if(EX_MEM_RegWrite) begin //forward from EX_MEM
 			if(ID_EX_RS==EX_MEM_RD)
