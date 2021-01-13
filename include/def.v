@@ -4,6 +4,15 @@
 `define INTERNAL_BITS 32
 `define IR_ADDR_BITS 10
 `define DATA_MEM_ADDR_BITS 13
+
+//extra
+`define PC_BITS 32
+`define REGISTER_BITS 5
+`define ALUCONTROL_BITS 4
+`define ALUOP_BITS 2
+`define FUNCTIONCODE_BITS 6
+//
+
 //----------------------instruction field------------------------
 `define OPCODE 31:26
 //RTYPE
